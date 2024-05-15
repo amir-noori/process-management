@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: process_management
+#  jpa:
+#    properties:
+#      hibernate:
+#        dialect=org:
+#          hibernate:
+#            dialect: org.hibernate.dialect.PostgreSQLDialect
+
+
+#  datasource:
+#    url: jdbc:postgresql://db:5432/postgres
+#    username: postgres
+#    password: zeebe
+#    driverClassName: org.postgresql.Driver
+
+server:
+  port: 5001
+
+#zeebe:
+#  client:
+#    security:
+#      plaintext: true
+
+#camunda:
+#  client:
+#    mode: simple
+#    auth:
+#      username: demo
+#      password: demo
+#    zeebe:
+#      client:
+#        security.plaintext: true
+#      enabled: true
+#      gateway-url: http://localhost:26500
+#      base-url: http://localhost:8080
+#      prefer-rest-over-grpc: false
+#    operate:
+#      enabled: true
+#      base-url: http://localhost:8081
+#    tasklist:
+#      enabled: true
+#      base-url: http://localhost:8082
+
+
+eze:
+  network:
+    host: 0.0.0.0
+    port: 26501
+  data:
+    directory: D:\\eze
+    logSegmentSize: 20MB
+    snapshotPeriod: 10m
+  exporters:
+    elasticsearch:
+      class-name: com.behsacorp.processmanagement.exporter.DemoExporter
