@@ -1,4 +1,4 @@
-package com.behsacorp.processmanagement.db;
+package com.behsacorp.processmanagement.pm.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

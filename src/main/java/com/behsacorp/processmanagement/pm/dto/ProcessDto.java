@@ -1,4 +1,4 @@
-package com.behsacorp.processmanagement.dto;
+package com.behsacorp.processmanagement.pm.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

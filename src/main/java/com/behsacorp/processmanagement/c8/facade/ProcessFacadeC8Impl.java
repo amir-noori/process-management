@@ -1,24 +1,20 @@
-package com.behsacorp.processmanagement.api.controller.rest;
+package com.behsacorp.processmanagement.c8.facade;
 
-
-import com.behsacorp.processmanagement.api.controller.model.WorkflowInstanceResponse;
-import com.behsacorp.processmanagement.api.controller.model.WorkflowResponse;
-import com.behsacorp.processmanagement.api.controller.model.WorkflowVariableRequest;
+import com.behsacorp.processmanagement.pm.controller.facade.ProcessFacade;
+import com.behsacorp.processmanagement.pm.controller.model.WorkflowInstanceResponse;
+import com.behsacorp.processmanagement.pm.controller.model.WorkflowResponse;
+import com.behsacorp.processmanagement.pm.controller.model.WorkflowVariableRequest;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.DeploymentEvent;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 import org.camunda.community.eze.ZeebeEngine;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
-@RequestMapping(path = "process", produces = "application/json")
-@CrossOrigin(origins = "*")
-public class ProcessController {
+public class ProcessFacadeC8Impl implements ProcessFacade {
 
     @Autowired
     private ZeebeClient zeebe;
@@ -26,17 +22,8 @@ public class ProcessController {
     @Autowired
     private ZeebeEngine zeebeEngine;
 
-
-    @GetMapping("/test")
-    public WorkflowResponse test() {
-        WorkflowResponse workflowResponse = new WorkflowResponse();
-        workflowResponse.setResultDescription("OK.");
-        workflowResponse.setResultCode(0);
-        return workflowResponse;
-    }
-
-    @GetMapping("/start")
-    public WorkflowInstanceResponse startWorkflow(@RequestParam String processName, @RequestParam int orderId) {
+    @Override
+    public WorkflowInstanceResponse startProcess(String processName, int orderId) {
         Map<String, Object> variables = new HashMap<>();
         variables.put("orderId", orderId);
 
@@ -55,8 +42,8 @@ public class ProcessController {
         return workflowInstanceResponse;
     }
 
-    @PostMapping("/addVariableToProcess")
-    public WorkflowResponse addVariableToProcess(@RequestBody WorkflowVariableRequest workflowVariableRequest) {
+    @Override
+    public WorkflowResponse addVariableToProcess(WorkflowVariableRequest workflowVariableRequest) {
         Map<String, Object> vars = new HashMap<>();
         vars.put(workflowVariableRequest.getVariableName(), workflowVariableRequest.getVariableValue());
 
@@ -71,8 +58,8 @@ public class ProcessController {
         return workflowResponse;
     }
 
-    @GetMapping("/deploy")
-    public WorkflowResponse deployWorkflow(@RequestParam String processName) {
+    @Override
+    public WorkflowResponse deployProcess(String processName) {
         WorkflowResponse workflowResponse = new WorkflowResponse();
 
         if (!processName.endsWith(".bpmn")) {
@@ -104,5 +91,4 @@ public class ProcessController {
 
         return workflowResponse;
     }
-
 }

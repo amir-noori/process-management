@@ -1,4 +1,4 @@
-package com.behsacorp.processmanagement.exporter;
+package com.behsacorp.processmanagement.c8.exporter;
 
 import io.camunda.zeebe.exporter.api.Exporter;
 import io.camunda.zeebe.exporter.api.context.Context;
@@ -30,9 +30,16 @@ public class DemoExporter implements Exporter {
 
     @Override
     public void export(Record record) {
-//        String recordJson = record.toJson();
-//        System.out.println("################################ Demo Exporter ################################");
-//        System.out.println(recordJson);
+        String recordJson = "";
+        try {
+            recordJson = record.toJson();
+        } catch (Throwable e) {
+            System.out.println("error in export: " + e.getMessage());
+            recordJson = record.toString();
+        }
+
+        System.out.println("################################ Demo Exporter ################################");
+        System.out.println(recordJson);
 //
 //        RecordType recordType = record.getRecordType();
 //        ValueType valueType = record.getValueType();

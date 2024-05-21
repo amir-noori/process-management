@@ -1,19 +1,9 @@
-package com.behsacorp.processmanagement.api.controller.model;
+package com.behsacorp.processmanagement.pm.controller.model;
 
 public class BaseResponse {
 
     protected String resultDescription;
     protected int resultCode;
-
-    protected long processInstanceKey;
-
-    public long getProcessInstanceKey() {
-        return processInstanceKey;
-    }
-
-    public void setProcessInstanceKey(long processInstanceKey) {
-        this.processInstanceKey = processInstanceKey;
-    }
 
     public String getResultDescription() {
         return resultDescription;

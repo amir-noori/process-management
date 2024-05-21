@@ -1,6 +1,8 @@
-package com.behsacorp.processmanagement.api.controller.model;
+package com.behsacorp.processmanagement.pm.controller.model.process;
 
-public class WorkflowVariableRequest extends BaseResponse {
+import com.behsacorp.processmanagement.pm.controller.model.BaseResponse;
+
+public class ProcessVariableRequest extends ProcessInstanceRequest {
 
     private String variableName;
     private String variableValue;

@@ -24,47 +24,33 @@
 
   <dependencies>
 
-    <dependency>
-      <groupId>io.camunda</groupId>
-      <artifactId>zeebe-exporter-api</artifactId>
-      <version>8.5.0</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>io.camunda</groupId>-->
+<!--      <artifactId>zeebe-exporter-api</artifactId>-->
+<!--      <version>8.5.0</version>-->
+<!--    </dependency>-->
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-<!--      <version>3.2.5</version>-->
-    </dependency>
-
-    <dependency>
-      <groupId>org.camunda.community</groupId>
-      <artifactId>eze-java</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
     </dependency>
 
 <!--    <dependency>-->
 <!--      <groupId>org.camunda.community</groupId>-->
-<!--      <artifactId>spring-eze-starter</artifactId>-->
+<!--      <artifactId>eze-java</artifactId>-->
 <!--      <version>1.0.1-SNAPSHOT</version>-->
 <!--    </dependency>-->
 
-<!--    <dependency>-->
-<!--      <groupId>org.springframework.boot</groupId>-->
-<!--      <artifactId>spring-boot-starter</artifactId>-->
-<!--      <version>3.2.5</version>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>org.camunda.bpm.springboot</groupId>
+      <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
+      <version>7.21.0</version>
+    </dependency>
 
-<!--    <dependency>-->
-<!--      <groupId>org.camunda.community</groupId>-->
-<!--      <artifactId>eze</artifactId>-->
-<!--      <version>1.2.0</version>-->
-<!--    </dependency>-->
-
-<!--    <dependency>-->
-<!--      <groupId>org.apache.httpcomponents.client5</groupId>-->
-<!--      <artifactId>httpclient5</artifactId>-->
-<!--      <version>5.3.1</version>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>com.oracle.database.jdbc</groupId>
@@ -88,5 +74,20 @@
 <!--      </plugin>-->
 <!--    </plugins>-->
 <!--  </build>-->
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <excludes>
+            <exclude>**/c8/**</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
