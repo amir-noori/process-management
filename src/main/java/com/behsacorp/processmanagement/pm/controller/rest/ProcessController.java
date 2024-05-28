@@ -3,10 +3,9 @@ package com.behsacorp.processmanagement.pm.controller.rest;
 
 import com.behsacorp.processmanagement.common.Results;
 import com.behsacorp.processmanagement.pm.controller.facade.ProcessFacade;
+import com.behsacorp.processmanagement.pm.controller.model.process.*;
 import com.behsacorp.processmanagement.pm.controller.model.task.CompleteUserTaskRequest;
-import com.behsacorp.processmanagement.pm.controller.model.process.ProcessInstanceResponse;
-import com.behsacorp.processmanagement.pm.controller.model.process.ProcessResponse;
-import com.behsacorp.processmanagement.pm.controller.model.process.ProcessVariableRequest;
+import com.behsacorp.processmanagement.pm.exception.PMException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +51,11 @@ public class ProcessController {
         return workflowResponse;
     }
 
+    @GetMapping("/delete")
+    public ProcessResponse deleteProcess(@RequestParam String processName) {
+        // TODO: first check the running instances
+        return null;
+    }
     @GetMapping("/claimUserTask")
     public ProcessResponse claimUserTask(@RequestParam String taskId, @RequestParam String userId) {
         ProcessResponse processResponse = new ProcessResponse();
@@ -67,6 +71,25 @@ public class ProcessController {
         processFacade.completeUserTask(completeUserTaskRequest.getTaskId(), completeUserTaskRequest.getVariables());
         processResponse.setResultDescription("task completed successfully.");
         processResponse.setResultCode(Results.SUCCESS.code);
+        return processResponse;
+    }
+
+    @GetMapping("/getProcessInstanceData")
+    public ProcessInstanceResponse getProcessInstanceData(@RequestParam String processId) throws PMException {
+        return processFacade.getProcessInstanceData(processId);
+    }
+
+    @PostMapping("/resolveIncident")
+    public ProcessResolveResponse resolveIncident(@RequestBody ProcessInstanceRequest processInstanceRequest) throws PMException {
+        ProcessResolveResponse processResolveResponse = new ProcessResolveResponse();
+        processFacade.resolveIncident(processInstanceRequest.getProcessInstanceId());
+        return processResolveResponse;
+    }
+
+    @PostMapping("/retryFailedInstance")
+    public ProcessResponse retryFailedInstance(@RequestBody ProcessInstanceRequest processInstanceRequest) throws PMException {
+        ProcessResponse processResponse = new ProcessResponse();
+        processFacade.retryFailedInstance(processInstanceRequest.getProcessInstanceId());
         return processResponse;
     }
 

@@ -1,18 +1,25 @@
 package com.behsacorp.processmanagement.c7.facade;
 
+import com.behsacorp.processmanagement.c7.util.DtoUtil;
 import com.behsacorp.processmanagement.pm.controller.facade.ProcessFacade;
+import com.behsacorp.processmanagement.pm.controller.model.process.ProcessInstanceExecutionHistoryResponse;
 import com.behsacorp.processmanagement.pm.controller.model.process.ProcessInstanceResponse;
 import com.behsacorp.processmanagement.pm.controller.model.process.ProcessResponse;
 import com.behsacorp.processmanagement.pm.controller.model.process.ProcessVariableRequest;
-import org.camunda.bpm.engine.RepositoryService;
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.TaskService;
+import com.behsacorp.processmanagement.pm.exception.PMException;
+import com.behsacorp.processmanagement.pm.exception.PMIncidentTypeHandleException;
+import com.behsacorp.processmanagement.pm.exception.PMNoIncidentException;
+import org.camunda.bpm.engine.*;
+import org.camunda.bpm.engine.history.HistoricActivityInstance;
 import org.camunda.bpm.engine.repository.Deployment;
+import org.camunda.bpm.engine.runtime.Incident;
+import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProcessFacadeC7Impl implements ProcessFacade {
@@ -26,13 +33,22 @@ public class ProcessFacadeC7Impl implements ProcessFacade {
     @Autowired
     public TaskService taskService;
 
+    @Autowired
+    public ManagementService managementService;
+
+    @Autowired
+    public HistoryService historyService;
+
     @Override
     public ProcessInstanceResponse startProcess(String processName) {
         ProcessInstanceResponse processInstanceResponse = new ProcessInstanceResponse();
+//        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
+//                .processDefinitionKey("invoice")
+//                .processDefinitionVersion(1).singleResult();
         ProcessInstance processInstanceResult = runtimeService
                 .createProcessInstanceByKey(processName)
                 .execute();
-        processInstanceResponse.setProcessInstanceId(processInstanceResult.getRootProcessInstanceId());
+        processInstanceResponse.setProcessInstanceId(processInstanceResult.getProcessInstanceId());
         return processInstanceResponse;
     }
 
@@ -67,6 +83,57 @@ public class ProcessFacadeC7Impl implements ProcessFacade {
             taskService.complete(taskId);
         } else {
             taskService.complete(taskId, variables);
+        }
+    }
+
+    @Override
+    public void resolveIncident(String instanceId) throws PMException {
+        Incident incident = runtimeService
+                .createIncidentQuery()
+                .processInstanceId(instanceId)
+                .singleResult();
+        if (incident == null) {
+            throw new PMNoIncidentException();
+        } else {
+            runtimeService.resolveIncident(incident.getId());
+        }
+    }
+
+    @Override
+    public ProcessInstanceExecutionHistoryResponse getProcessInstanceData(String instanceId) throws PMException {
+        ProcessInstanceExecutionHistoryResponse response = new ProcessInstanceExecutionHistoryResponse();
+        List<HistoricActivityInstance> historicActivityInstances = historyService
+                .createHistoricActivityInstanceQuery()
+                .processInstanceId(instanceId)
+                .orderByHistoricActivityInstanceStartTime().asc()
+                .list();
+
+        response.setActivityInstanceDtoList(DtoUtil.copyFromHistoricActivityInstances(historicActivityInstances));
+        return response;
+    }
+
+    @Override
+    public void retryFailedInstance(String instanceId) throws PMException {
+        Incident incident = runtimeService
+                .createIncidentQuery()
+                .processInstanceId(instanceId)
+                .singleResult();
+
+        if (incident == null) {
+            throw new PMNoIncidentException();
+        } else {
+            if (incident.getIncidentType().equals("failedJob")) {
+                Job job = managementService
+                        .createJobQuery()
+                        .processInstanceId(instanceId)
+                        .singleResult();
+
+                String jobId = job.getId();
+
+                managementService.setJobRetries(jobId, 10);
+            } else {
+                throw new PMIncidentTypeHandleException("incident of type " + incident.getIncidentType() + " is not handled.");
+            }
         }
     }
 }
